@@ -14,6 +14,8 @@ public class FaceResult extends Object {
     private float pose;
     private int id;
     private long time;
+    private String name;
+    private String info;
 
     public FaceResult() {
         id = 0;
@@ -92,5 +94,21 @@ public class FaceResult extends Object {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 }

@@ -23,10 +23,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+
+import com.microsoft.projectoxford.face.*;
+import com.microsoft.projectoxford.face.contract.*;
+import com.microsoft.projectoxford.face.rest.ClientException;
 
 import br.com.tedeschi.stickers.R;
 import br.com.tedeschi.stickers.activity.ui.FaceOverlayView;
@@ -97,6 +105,8 @@ public final class FaceDetectActivity extends AppCompatActivity implements Surfa
     private RecyclerView recyclerView;
 
     //private ArrayList<Bitmap> facesBitmap;
+    private FaceServiceClient faceServiceClient =
+            new FaceServiceRestClient("https://westus.api.cognitive.microsoft.com/face/v1.0", "23ef9f92261e44c0980e1684522abd3c");
 
 
     //==============================================================================================
@@ -522,21 +532,49 @@ public final class FaceDetectActivity extends AppCompatActivity implements Surfa
                             if (count <= 5)
                                 facesCount.put(idFace, count);
 
-//                            //
-//                            // Crop Face to display in RecylerView
-//                            //
-//                            if (count == 5) {
-//                                faceCroped = ImageUtils.cropFace(faces[i], bitmap, rotate);
-//                                if (faceCroped != null) {
+                            //
+                            // Crop Face to display in RecylerView
+                            //
+                            if (count == 5) {
+                                faceCroped = ImageUtils.cropFace(faces[i], bitmap, rotate);
+                                if (faceCroped != null) {
+                                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                                    faceCroped.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                                    ByteArrayInputStream inputStream =
+                                            new ByteArrayInputStream(outputStream.toByteArray());
+
+                                    try {
+                                        Face[] result = faceServiceClient.detect(
+                                                inputStream,
+                                                true,         // returnFaceId
+                                                false,        // returnFaceLandmarks
+                                                null           // returnFaceAttributes: a string like "age, gender"
+                                        );
+
+                                        UUID[] faceId = new UUID[1];
+                                        faceId[0] = result[0].faceId;
+
+                                        IdentifyResult[] identity = faceServiceClient.identity("b4e791dc-6d9b-4af7-bb0b-f1eb7e013bfd", faceId, 1);
+                                        UUID personId = identity[0].candidates.get(0).personId;
+
+                                        Person person = faceServiceClient.getPerson("b4e791dc-6d9b-4af7-bb0b-f1eb7e013bfd", personId);
+                                        faces[i].setName(person.name);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
 //                                    handler.post(new Runnable() {
 //                                        public void run() {
 //                                            //imagePreviewAdapter.add(faceCroped);
 //                                        }
 //                                    });
-//                                }
-//                            }
+                                }
+                            }
                         }
+                    } else {
+                        faces[i].setName("");
                     }
+
                 }
             }
 

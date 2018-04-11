@@ -118,6 +118,18 @@ public class FaceOverlayView extends View {
                         rectF.right = getWidth() - left;
                     }
                     canvas.drawRect(rectF, mPaint);
+
+                    String name = face.getName();
+                    String info = face.getInfo();
+
+                    if (name != null) {
+                        canvas.drawText(name, rectF.left, rectF.bottom + mTextPaint.getTextSize(), mTextPaint);
+                    }
+
+                    if (info != null) {
+                        canvas.drawText(info, rectF.left, rectF.bottom + mTextPaint.getTextSize() * 2, mTextPaint);
+                    }
+
                     //canvas.drawText("ID " + face.getId(), rectF.left, rectF.bottom + mTextPaint.getTextSize(), mTextPaint);
                     //canvas.drawText("Confidence " + face.getConfidence(), rectF.left, rectF.bottom + mTextPaint.getTextSize() * 2, mTextPaint);
                     //canvas.drawText("EyesDistance " + face.eyesDistance(), rectF.left, rectF.bottom + mTextPaint.getTextSize() * 3, mTextPaint);
