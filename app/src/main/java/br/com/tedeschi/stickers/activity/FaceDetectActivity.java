@@ -474,6 +474,7 @@ public final class FaceDetectActivity extends AppCompatActivity implements Surfa
 
             for (int i = 0; i < MAX_FACE; i++) {
                 if (fullResults[i] == null) {
+                    Log.d(TAG, "WPT014 Cleanning faces");
                     faces[i].clear();
                 } else {
                     PointF mid = new PointF();
@@ -544,6 +545,7 @@ public final class FaceDetectActivity extends AppCompatActivity implements Surfa
                                             new ByteArrayInputStream(outputStream.toByteArray());
 
                                     try {
+                                        Log.d(TAG, "WPT014 FaceServiceClient detect");
                                         Face[] result = faceServiceClient.detect(
                                                 inputStream,
                                                 true,         // returnFaceId
@@ -551,14 +553,33 @@ public final class FaceDetectActivity extends AppCompatActivity implements Surfa
                                                 null           // returnFaceAttributes: a string like "age, gender"
                                         );
 
-                                        UUID[] faceId = new UUID[1];
-                                        faceId[0] = result[0].faceId;
+                                        if (result != null && result.length > 0) {
+                                            UUID[] faceId = new UUID[1];
+                                            faceId[0] = result[0].faceId;
 
-                                        IdentifyResult[] identity = faceServiceClient.identity("b4e791dc-6d9b-4af7-bb0b-f1eb7e013bfd", faceId, 1);
-                                        UUID personId = identity[0].candidates.get(0).personId;
+                                            Log.d(TAG, "WPT014 FaceServiceClient identity");
+                                            IdentifyResult[] identity = faceServiceClient.identity("b4e791dc-6d9b-4af7-bb0b-f1eb7e013bfd", faceId, 1);
 
-                                        Person person = faceServiceClient.getPerson("b4e791dc-6d9b-4af7-bb0b-f1eb7e013bfd", personId);
-                                        faces[i].setName(person.name);
+                                            if (identity != null && identity.length > 0) {
+                                                UUID personId = identity[0].candidates.get(0).personId;
+
+                                                Log.d(TAG, "WPT014 FaceServiceClient getPerson");
+                                                Person person = faceServiceClient.getPerson("b4e791dc-6d9b-4af7-bb0b-f1eb7e013bfd", personId);
+
+                                                if (person != null) {
+                                                    Log.d(TAG, "WPT014 Found " + person.name);
+                                                    faces[i].setName(person.name);
+                                                } else {
+                                                    Log.d(TAG, "WPT014 FaceServiceClient getPerson error");
+                                                }
+                                            } else {
+                                                Log.d(TAG, "WPT014 FaceServiceClient identity error");
+                                            }
+                                        } else {
+                                            Log.d(TAG, "WPT014 FaceServiceClient detect error");
+                                        }
+
+
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }

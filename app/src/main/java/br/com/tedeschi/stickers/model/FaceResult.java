@@ -33,6 +33,8 @@ public class FaceResult extends Object {
 
     public void clear() {
         set(0, new PointF(0.0f, 0.0f), 0.0f, 0.4f, 0.0f, System.currentTimeMillis());
+        this.name = "";
+        this.info = "";
     }
 
     public synchronized void set(int id, PointF midEye, float eyeDist, float confidence, float pose, long time) {
