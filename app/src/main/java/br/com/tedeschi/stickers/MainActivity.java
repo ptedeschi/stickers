@@ -26,49 +26,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
         mContext = this;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        int rc = ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA);
+        if (rc == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(mContext, FaceDetectActivity.class);
+            startActivity(intent);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
-                int rc = ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA);
-                if (rc == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(mContext, FaceDetectActivity.class);
-                    startActivity(intent);
-                } else {
-                    requestCameraPermission(HANDLE_CAMERA_PERMISSION);
-                }
-            }
-        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            finish();
+        } else {
+            requestCameraPermission(HANDLE_CAMERA_PERMISSION);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void requestCameraPermission(final int RC_HANDLE_CAMERA_PERM) {
@@ -86,10 +55,12 @@ public class MainActivity extends AppCompatActivity {
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && requestCode == HANDLE_CAMERA_PERMISSION) {
             Intent intent = new Intent(mContext, FaceDetectActivity.class);
             startActivity(intent);
-            return;
-        }
+            finish();
+        } else {
+            Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
+                    " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
 
-        Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
-                " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
+            finish();
+        }
     }
 }
