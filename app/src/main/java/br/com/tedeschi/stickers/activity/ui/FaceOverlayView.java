@@ -56,10 +56,11 @@ public class FaceOverlayView extends View {
         mTextPaint = new Paint();
         mTextPaint.setAntiAlias(true);
         mTextPaint.setDither(true);
-        int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, metrics);
+        int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, metrics);
         mTextPaint.setTextSize(size);
-        mTextPaint.setColor(Color.GREEN);
+        mTextPaint.setColor(Color.WHITE);
         mTextPaint.setStyle(Paint.Style.FILL);
+        mTextPaint.setShadowLayer(5.0f, 10.0f, 10.0f, Color.BLACK);
     }
 
     public void setFPS(double fps) {
@@ -123,11 +124,7 @@ public class FaceOverlayView extends View {
                     String info = face.getInfo();
 
                     if (name != null) {
-                        canvas.drawText(name, rectF.left, rectF.bottom + mTextPaint.getTextSize(), mTextPaint);
-                    }
-
-                    if (info != null) {
-                        canvas.drawText(info, rectF.left, rectF.bottom + mTextPaint.getTextSize() * 2, mTextPaint);
+                        canvas.drawText(name, rectF.left, rectF.bottom + mTextPaint.getTextSize() * 2, mTextPaint);
                     }
 
                     //canvas.drawText("ID " + face.getId(), rectF.left, rectF.bottom + mTextPaint.getTextSize(), mTextPaint);

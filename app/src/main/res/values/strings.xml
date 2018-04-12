@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Stickers</string>
+    <string name="app_action_about">About</string>
+    <string name="app_copyright">©2018 Tedeschi</string>
+    <string name="app_email">developer@tedeschi.com.br</string>
+    <string name="app_site">http://www.tedeschi.com.br</string>
+    <string name="dialog_about_title">About</string>
 </resources>

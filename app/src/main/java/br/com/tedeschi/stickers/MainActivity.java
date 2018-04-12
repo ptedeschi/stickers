@@ -14,6 +14,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
 
 import br.com.tedeschi.stickers.activity.FaceDetectActivity;
 
@@ -28,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mContext = this;
+
+        AppCenter.start(getApplication(), "23a64e5c-2292-4576-87aa-4566f8a00fd5",
+                Analytics.class, Crashes.class);
 
         int rc = ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {

@@ -13,6 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +25,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.projectoxford.face.*;
 import com.microsoft.projectoxford.face.contract.*;
 import com.microsoft.projectoxford.face.rest.ClientException;
@@ -164,7 +169,7 @@ public final class FaceDetectActivity extends AppCompatActivity implements Surfa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.menu_camera, menu);
+        inflater.inflate(R.menu.menu_camera, menu);
 
         return true;
     }
@@ -173,8 +178,25 @@ public final class FaceDetectActivity extends AppCompatActivity implements Surfa
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case android.R.id.home:
-                super.onBackPressed();
+            case R.id.action_about:
+                Analytics.trackEvent("About");
+
+                // Linkify the message
+                String message = String.format("%s\nver. %s\n%s\n%s", getString(R.string.app_name), Util.getVersion(this), getString(R.string.app_copyright), getString(R.string.app_email));
+
+                SpannableString s = new SpannableString(message);
+                Linkify.addLinks(s, Linkify.ALL);
+
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .setTitle(getString(R.string.dialog_about_title))
+                        .setMessage(s)
+                        .create();
+
+                alertDialog.show();
+
+                // Make the textview clickable. Must be called after show()
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
                 return true;
 
 
@@ -569,6 +591,8 @@ public final class FaceDetectActivity extends AppCompatActivity implements Surfa
                                                 if (person != null) {
                                                     Log.d(TAG, "WPT014 Found " + person.name);
                                                     faces[i].setName(person.name);
+
+                                                    Analytics.trackEvent("Recognized: " + person.name);
                                                 } else {
                                                     Log.d(TAG, "WPT014 FaceServiceClient getPerson error");
                                                 }

@@ -13,6 +13,7 @@
 # Keep classes from third-party libraries
 -keep class com.microsoft.projectoxford.face.** {* ; }
 -keep class com.google.gson.** {* ; }
+-keep class com.microsoft.appcenter.** {* ; }
 
 # Apache special
 -keep class org.apache.http.** { *; }

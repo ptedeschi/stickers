@@ -1,6 +1,9 @@
 package br.com.tedeschi.stickers.utils;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.hardware.Camera;
@@ -134,5 +137,20 @@ public class Util {
             size.set(d.getWidth(), d.getHeight());
         }
         return size;
+    }
+
+    public static String getVersion(Context context) {
+        String version = "Unknown";
+
+        PackageManager packageManager = context.getPackageManager();
+
+        try {
+            PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+            version = String.format("%s build %s", packageInfo.versionName, packageInfo.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return version;
     }
 }
